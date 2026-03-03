@@ -12,33 +12,68 @@
 #include <cmath>
 using namespace std;
 
-int longSub(vector<int> & arr, int target){
-    int n = arr.size();
-    unordered_map<int, int>st;
-    int maxLen = 0;
-    int sum = 0;
-
-    for(int i = 0; i<n; i++){
-        sum += arr[i];
-
-        if(sum == 0){
-            maxLen = i+1;
+class Solution {
+public:
+    /* Function to find the longest substring
+    without repeating characters*/
+    int longestNonRepeatingSubstring(string& s) {
+        int n = s.size();
+        
+        // Assuming all ASCII characters
+        int HashLen = 256; 
+        
+        /* Hash table to store last
+        occurrence of each character*/
+        int hash[HashLen]; 
+        
+        /* Initialize hash table with
+        -1 (indicating no occurrence)*/
+        for (int i = 0; i < HashLen; ++i) {
+            hash[i] = -1;
         }
-        else if(st.find(sum) != st.end()){
-            maxLen = max(maxLen, i - st[sum]);
-        }else {
-            st[sum] = i;
+
+        int l = 0, r = 0, maxLen = 0;
+        while (r < n) {
+            
+            /* If current character s[r] 
+            is already in the substring*/
+            if (hash[s[r]] != -1) {
+                
+                /* Move left pointer to the right
+                of the last occurrence of s[r]*/
+                l = max(hash[s[r]] + 1, l);
+            }
+            
+            // Calculate the current substring length
+            int len = r - l + 1;
+            
+            // Update maximum length found so far
+            maxLen = max(len, maxLen);
+            
+            /* Store the index of the current
+            character in the hash table*/
+            hash[s[r]] = r;
+            
+            // Move right pointer to next position
+            r++;
         }
+       
+        // Return the maximum length found
+        return maxLen;
     }
-    return maxLen;
-}
+};
 
+int main() {
+    string s = "cadbzabcd"; 
+    
+    // Create an instance of the Solution class
+    Solution sol;
 
-int main(){
+    int result = sol.longestNonRepeatingSubstring(s);
 
-    vector<int>arr = {9, -3, 3, -1, 6, -5};
-    int target = 0;
-    cout<<longSub(arr, target)<<endl;
- 
- return 0;
+    // Output the maximum length
+    cout << "The maximum length is:\n";
+    cout << result << endl;
+
+    return 0;
 }
